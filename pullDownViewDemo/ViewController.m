@@ -17,10 +17,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.pullMenu = [[PullMenuView alloc]initWithFrame:CGRectMake(0, 20, [[UIScreen mainScreen]bounds].size.width, 50)];
-    self.pullMenu.spreadedHeight = 170;
+//    self.pullMenu.spreadedHeight = 170;
     self.pullMenu.delegate = self;
     self.pullMenu.tagArray =@[@"BBC",@"流式table",@"github",@"code4app",@"约束",@"九月好天气",@"notification",@"仗义",@"朋友",@"OpenGL ES",@"非常复杂",@"好好想想怎么回事",@"patience",@"weakend project",@"自定义流式标签",@"github",@"code4app",@"god"];
      [self.view addSubview:self.pullMenu];
+    
+    
+    PullMenuView *tempPullMenu = [[PullMenuView alloc]initWithFrame:CGRectMake(0, 200, [[UIScreen mainScreen]bounds].size.width, 50)];
+    //    self.pullMenu.spreadedHeight = 170;
+    tempPullMenu.delegate = self;
+    tempPullMenu.tagArray =@[@"CCCCCC"];
+    [self.view addSubview:tempPullMenu];
     // Do any additional setup after loading the view, typically from a nib.
 }
 

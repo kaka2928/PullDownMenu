@@ -10,7 +10,7 @@
 #import "CCFlowTableViewCell.h"
 #import "PullMenuDefine.h"
 
-@interface CCFlowTableView(){
+@interface CCFlowTableView()<CCFlowTableViewCellDelegate>{
 
     NSInteger _compressHeight;
 
@@ -32,9 +32,7 @@
         
         
         _compressHeight = frame.size.height;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(subTitleButtonOnSelected:) name:@SUBMENUBUTTONONSELECTNOTIFICATION object:nil];
+
         self.bounces = YES;
         
         self.scrollEnabled = YES;
@@ -42,23 +40,27 @@
     }
     return self;
 }
-- (void)subTitleButtonOnSelected:(NSNotification *)notification{
-
-
-    NSDictionary *userInfo = notification.userInfo;
+#pragma mark - CCFlowTableViewCellDelegate
+- (void)CCFlowTableViewCell:(CCFlowTableViewCell *)flowTableViewCell selectedTitle:(NSString *)cellTitle{
     if (currentSelectedCell!=NULL) {
         currentSelectedCell.enable = YES;
     }
-    currentSelectedCell = (CCFlowTableViewCell *)[userInfo valueForKey:@"cellID"];
+    currentSelectedCell = flowTableViewCell;
+    
+    if ([self.flowDelegate respondsToSelector:@selector(CCFlowTableView:selectedTitle:)]) {
+            [self.flowDelegate CCFlowTableView:self selectedTitle:cellTitle];
+    }
 
-    [self.flowDelegate CCFlowTableView:self selectedTitle:[userInfo valueForKey:@"title"]];
+    
 }
+
 - (void)setSubTitleArray:(NSArray *)subTitleArray{
 
     _subTitleArray = subTitleArray;
     _cells = [NSMutableArray arrayWithCapacity:[_subTitleArray count]];
     for (int i = 0; i<[_subTitleArray count]; i++) {
         CCFlowTableViewCell *cell = [[CCFlowTableViewCell alloc]initWithTitle:[_subTitleArray objectAtIndex:i]];
+        cell.flowDelegate = self;
         [_cells addObject:cell];
         [cell setFrame:CGRectMake(_contentWidth, 5, cell.frame.size.width, cell.frame.size.height)];
        
@@ -75,7 +77,8 @@
     CGFloat currentHeight = 5;
     CGFloat priorCellWidth = 0;
     CGFloat cellHeight = 0;
-    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.x, self.frame.size.width, _spreadedHeight)];
+
+
     for (int i = 0; i<[_cells count]; i++) {
         
         CCFlowTableViewCell *cell =[_cells objectAtIndex:i];
@@ -112,6 +115,10 @@
 //        
 //    }
     [self setContentSize:CGSizeMake(self.frame.size.width, currentHeight + cellHeight + 5)];
+    if (_spreadedHeight ==0) {
+        _spreadedHeight = self.contentSize.height;
+    }
+    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.x, self.frame.size.width, _spreadedHeight)];
 }
 - (void)compress{
     _contentWidth = 5;

@@ -27,7 +27,7 @@
         self.layer.borderWidth =1.0;
         self.layer.cornerRadius = 3.0;
         self.title = [[UILabel alloc]initWithFrame:CGRectMake(4, 4, width, SUBMENUFONTSIZE)];
-        self.title.font = [UIFont fontWithName:@"Helvetica" size:SUBMENUFONTSIZE];
+        self.title.font = [UIFont systemFontOfSize:SUBMENUFONTSIZE];
         [self.title setTextColor:[UIColor blackColor]];
         self.title.textAlignment = NSTextAlignmentCenter;
         self.title.text = title;
@@ -39,6 +39,7 @@
 }
 - (void)setEnable:(BOOL)enable{
     _enable = enable;
+    [self.title setTextColor:[UIColor blackColor]];
     self.layer.borderColor = [[UIColor grayColor]CGColor];
 }
 #pragma mark - touch event
@@ -47,11 +48,11 @@
     if (self.enable) {
         self.enable = NO;
         self.layer.borderColor = [[UIColor redColor]CGColor];
-        NSMutableDictionary *tempInfo = [[NSMutableDictionary alloc]init];
-        [tempInfo setObject:self.title.text forKey:@"title"];
-        [tempInfo setObject:self forKey:@"cellID"];
-        self.layer.borderColor = [[UIColor redColor]CGColor];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@SUBMENUBUTTONONSELECTNOTIFICATION object:NULL userInfo:tempInfo];
+        [self.title setTextColor:[UIColor redColor]];
+        if ([self.flowDelegate respondsToSelector:@selector(CCFlowTableViewCell:selectedTitle:)]) {
+            [self.flowDelegate CCFlowTableViewCell:self selectedTitle:self.title.text];
+        }
+
     }
 }
 @end

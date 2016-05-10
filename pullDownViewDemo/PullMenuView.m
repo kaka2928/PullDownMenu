@@ -74,8 +74,11 @@
 }
 - (void)setSpreadedHeight:(CGFloat)spreadedHeight{
 
-    _spreadedHeight = spreadedHeight;
-    self.flowTable.spreadedHeight = _spreadedHeight - PULLBUTTONHIGHT;
+    if (spreadedHeight>0) {
+        _spreadedHeight = spreadedHeight;
+        self.flowTable.spreadedHeight = _spreadedHeight - PULLBUTTONHIGHT;
+    }
+
 }
 - (void)setTagArray:(NSArray *)tagArray{
 
@@ -113,19 +116,24 @@
             CGRect barFrame =[_barImageView frame];
             if (_isOpen == FALSE)
             {
+                [self.flowTable spread];
+                if (_spreadedHeight ==0) {
+                    _spreadedHeight = self.flowTable.spreadedHeight + PULLBUTTONHIGHT;
+                }
                 frame.size.height = _spreadedHeight;
                 [_barImageView setFrame:CGRectMake(barFrame.origin.x,barFrame.origin.y + _spreadedHeight-_contractedHeight,barFrame.size.width,barFrame.size.height)];
                 [_barImageView setTransform:_barImageViewRotation];
                 _isOpen = TRUE;
-                [self.flowTable spread];
+
             }
             else
             {
+                [self.flowTable compress];
                 frame.size.height = _contractedHeight;
                 [_barImageView setFrame:CGRectMake(barFrame.origin.x,barFrame.origin.y -(_spreadedHeight-_contractedHeight),barFrame.size.width,barFrame.size.height)];
                 [_barImageView setTransform:CGAffineTransformIdentity];
                 _isOpen = FALSE;
-                [self.flowTable compress];
+                
             }
             
             [self setFrame:frame];
